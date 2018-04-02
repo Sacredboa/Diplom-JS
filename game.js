@@ -108,13 +108,13 @@ class Level {
       throw new Error('Не задан нужный аргумент!(109)');
     }
     if(this.grid === undefined) {
-			return undefined;
-		}
-		for(let newAct of this.actors) {
-			if((typeof(newAct) !== undefined) && (actor.isIntersect(newAct))) {
-				return newAct;
-			}
-		}
+      return undefined;
+    }
+    for(let newAct of this.actors) {
+      if((typeof(newAct) !== undefined) && (actor.isIntersect(newAct))) {
+	return newAct;
+      }
+    }
   }
 
   obstacleAt(pos, size) {
@@ -180,7 +180,7 @@ class LevelParser {
   
   actorFromSymbol(sym) {
   	if(typeof(sym) === 'undefined') {
-  		return undefined;
+  	  return undefined;
   	}
     if(sym in this.activeActors) {
       return this.activeActors[sym];
@@ -215,7 +215,7 @@ class LevelParser {
     for(let i = 0; i < actor.length; i++) {
       for(let d = 0; d < actor[i].length; d++) {
         let Act = this.activeActors[actor[i][d]];
-          if(typeof(Act) === 'function') {
+        if(typeof(Act) === 'function') {
           let option = new Act(new Vector(d, i));
           if(option instanceof Actor) {
             newActor.push(option);
