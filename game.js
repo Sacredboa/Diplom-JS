@@ -121,14 +121,14 @@ class Level {
     if(!(pos instanceof Vector) || !(size instanceof Vector)) {
       throw new Error('Не задан нужный аргумент!(123)');
     }
-    if((pos.y + size.y) > this.height) {
+    if(Math.ceil(pos.y + size.y) > this.height) {
       return 'lava';
     }
-    if((pos.x < 0) || (pos.y <0) || ((pos.x + size.x) > this.width)) {
+    if((Math.floor(pos.x) < 0) || (Math.floor(pos.y) <0) || (Math.ceil(pos.x + size.x) > this.width)) {
       return 'wall';
     }
-    for(let i = Math.round(pos.x); i < Math.round(pos.x + size.x); i++) {
-      for(let d = Math.round(pos.y); d < Math.round(pos.y + size.y); d++) {
+    for(let i = Math.floor(pos.x); i < Math.ceil(pos.x + size.x); i++) {
+      for(let d = Math.floor(pos.y); d < Math.ceil(pos.y + size.y); d++) {
         if(this.grid[d][i] !== undefined) {
           return this.grid[d][i];
         }
