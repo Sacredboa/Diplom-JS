@@ -44,7 +44,7 @@ class Actor {
     
     isIntersect(actor) {
       if(!(actor instanceof Actor)) {
-        throw new Error('Не задан нужный аргумент!(48)');
+        throw new Error('Не задан нужный аргумент!(47)');
       }
       if(this === actor) {
         return false;
@@ -52,16 +52,16 @@ class Actor {
       if (this.top >= actor.bottom) {
         return false;
       } 
-		  if (this.right <= actor.left) {
-		    return false;
-		  }
-		  if (this.left >= actor.right) {
-		    return false;
-		  }
-		  if (this.bottom <= actor.top) {
-		    return false;
-		  }
-		  return true;
+	  if (this.right <= actor.left) {
+		return false;
+	  }
+	  if (this.left >= actor.right) {
+		return false;
+	  }
+	  if (this.bottom <= actor.top) {
+		return false;
+	  }
+	  return true;
     }
     
     act() {}
