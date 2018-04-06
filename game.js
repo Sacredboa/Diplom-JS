@@ -235,7 +235,7 @@ class Fireball extends Actor {
   }
   
   handleObstacle() {
-    this.speed = this.speed.times(-1);;
+    this.speed = this.speed.times(-1);
   }
   
   act(time, level) {
