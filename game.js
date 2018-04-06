@@ -70,65 +70,54 @@ class Actor {
  
 class Level {
   constructor(grid = [], actors = []) {
-    this.grid = grid;
-    this.actors = actors;
-    
-    for(let play of actors) {
-      if(play.type === 'player') {
-        this.player = play;
-        break;
-      }
-    }
-    
+    this.grid = grid.slice();
+    this.actors = actors.slice();
+    this.player = this.actors.find((actor) => actor.type === 'player');
     this.height = grid.length;
-    this.width = 0;
+    this.width = Math.max(0,...this.grid.map(a => a.length));
 
-    for(let i of this.grid) {
+    /*for(let i of this.grid) {
       if(i !== undefined) {
         if(i.length > this.width) {
           this.width = i.length;
         } 
       }
     }
-    
+    */
+
     this.status = null;
     this.finishDelay = 1;
   }
   
   isFinished() {
-    if((this.status !== null) && (this.finishDelay < 0)) {
-      return true;
-    } else {
-      return false;
-    }
+    return ((this.status !== null) && (this.finishDelay < 0)); 
   }
   
   actorAt(actor) {
     if(!(actor instanceof Actor)) {
       throw new Error('Не задан нужный аргумент!(109)');
     }
-    if(this.grid === undefined) {
-      return undefined;
-    }
-    for(let newAct of this.actors) {
-      if((typeof(newAct) !== undefined) && (actor.isIntersect(newAct))) {
-	return newAct;
-      }
-    }
+    return this.actors.find(newAct => newAct.isIntersect(actor));
   }
 
   obstacleAt(pos, size) {
+
+    const x1 = Math.floor(pos.x);
+    const x2 = Math.ceil(pos.x + size.x);
+    const y1 = Math.floor(pos.y);
+    const y2 = Math.ceil(pos.y + size.y);
+
     if(!(pos instanceof Vector) || !(size instanceof Vector)) {
       throw new Error('Не задан нужный аргумент!(123)');
     }
-    if(Math.ceil(pos.y + size.y) > this.height) {
+    if(y2 > this.height) {
       return 'lava';
     }
-    if((Math.floor(pos.x) < 0) || (Math.floor(pos.y) <0) || (Math.ceil(pos.x + size.x) > this.width)) {
+    if((x1 < 0) || (y1 <0) || (x2 > this.width)) {
       return 'wall';
     }
-    for(let i = Math.floor(pos.x); i < Math.ceil(pos.x + size.x); i++) {
-      for(let d = Math.floor(pos.y); d < Math.ceil(pos.y + size.y); d++) {
+    for(let i = x1; i < x2; i++) {
+      for(let d = y1; d < y2; d++) {
         if(this.grid[d][i] !== undefined) {
           return this.grid[d][i];
         }
@@ -145,16 +134,7 @@ class Level {
   }
   
   noMoreActors(obj) {
-    if(this.actors !== undefined) {
-      for(let moreActors of this.actors) {
-        if(moreActors.type !== obj) {
-          return true;
-        } else {
-          return false;
-        }
-      }
-    }
-    return true;
+    return !this.actors.some(a => a.type === obj);
   }
   
   playerTouched(type, activeObj) {
@@ -169,23 +149,32 @@ class Level {
       }
     }
     return;
+
+    /* 
+    if(this.status !== null) {
+      return;
+    }
+    if(type === 'lava' || type === 'fireball') {
+      this.status = 'lost';
+    }
+    if((type === 'coin') && (activeObj.type === 'coin')) {
+      this.removeActor(activeObj);
+      if(this.noMoreActors('coin') === true) {
+        this.status = 'won';
+      }
+    }
+     */
   }
 }
 
 
 class LevelParser {
   constructor(activeActors = {}) {
-    this.activeActors = activeActors;
+    this.activeActors = Object.assign({}, activeActors);
   }
   
   actorFromSymbol(sym) {
-  	if(typeof(sym) === 'undefined') {
-  	  return undefined;
-  	}
-    if(sym in this.activeActors) {
-      return this.activeActors[sym];
-    }
-    return undefined;
+  	return this.activeActors[sym];
   }
 
   obstacleFromSymbol(sym) {
@@ -193,8 +182,6 @@ class LevelParser {
       return 'wall';
     } else if(sym === '!') {
       return 'lava';
-    } else {
-      return undefined;
     }
   }
 
@@ -227,8 +214,8 @@ class LevelParser {
   }
   
    parse(arrayStr) {
-    let grid = this.createGrid(arrayStr);
-    let actors = this.createActors(arrayStr);
+    const grid = this.createGrid(arrayStr);
+    const actors = this.createActors(arrayStr);
     return new Level(grid, actors);
   }
 }
@@ -248,7 +235,7 @@ class Fireball extends Actor {
   }
   
   handleObstacle() {
-    this.speed = new Vector(-this.speed.x, -this.speed.y);
+    this.speed = this.speed.times(-1);;
   }
   
   act(time, level) {
