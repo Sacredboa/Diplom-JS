@@ -51,7 +51,8 @@ class Actor {
       }
       if (this.top >= actor.bottom) {
         return false;
-      } 
+      }
+      // форматирование
       if (this.right <= actor.left) {
 	return false;
       }
@@ -76,6 +77,7 @@ class Level {
     this.height = grid.length;
     this.width = Math.max(0,...this.grid.map(a => a.length));
 
+    // комментарий
     /*for(let i of this.grid) {
       if(i !== undefined) {
         if(i.length > this.width) {
@@ -118,6 +120,8 @@ class Level {
     }
     for(let i = x1; i < x2; i++) {
       for(let d = y1; d < y2; d++) {
+        // this.grid[d][i] лучше записать в переменную
+        // и достаточно проверки if (this.grid.[d][i])
         if(this.grid[d][i] !== undefined) {
           return this.grid[d][i];
         }
@@ -148,8 +152,10 @@ class Level {
         }
       }
     }
-    return;
+    return; // лишняя строчка
 
+
+    // комментарий
     /* 
     if(this.status !== null) {
       return;
@@ -170,6 +176,7 @@ class Level {
 
 class LevelParser {
   constructor(activeActors = {}) {
+    // в ES6 можно использовать оператор ...
     this.activeActors = Object.assign({}, activeActors);
   }
   
@@ -198,6 +205,7 @@ class LevelParser {
   }
 
   createActors(actor) {
+    // значение присваивается переменой один раз, так что лучше использвать const
     let newActor = [];
     for(let i = 0; i < actor.length; i++) {
       for(let d = 0; d < actor[i].length; d++) {
