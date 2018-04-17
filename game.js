@@ -75,16 +75,6 @@ class Level {
     this.player = this.actors.find((actor) => actor.type === 'player');
     this.height = grid.length;
     this.width = Math.max(0,...this.grid.map(a => a.length));
-
-    /*for(let i of this.grid) {
-      if(i !== undefined) {
-        if(i.length > this.width) {
-          this.width = i.length;
-        } 
-      }
-    }
-    */
-
     this.status = null;
     this.finishDelay = 1;
   }
@@ -118,16 +108,16 @@ class Level {
     }
     for(let i = x1; i < x2; i++) {
       for(let d = y1; d < y2; d++) {
-        if(this.grid[d][i] !== undefined) {
+        if(this.grid[d][i]) {
           return this.grid[d][i];
         }
       }
     }
-    return undefined;
+    return;
   }
   
   removeActor(actor) {
-    let deletActor = this.actors.indexOf(actor);
+    const deletActor = this.actors.indexOf(actor);
     if(deletActor > -1) {
       this.actors.splice(deletActor, 1);
     } 
@@ -138,19 +128,6 @@ class Level {
   }
   
   playerTouched(type, activeObj) {
-    if(this.status === null) {
-      if((type === 'lava') || (type === 'fireball')) {
-        this.status = 'lost';
-      } else if((type === 'coin') && (activeObj.type === 'coin')) {
-        this.removeActor(activeObj);
-        if(this.noMoreActors('coin') === true) {
-          this.status = 'won';
-        }
-      }
-    }
-    return;
-
-    /* 
     if(this.status !== null) {
       return;
     }
@@ -163,7 +140,7 @@ class Level {
         this.status = 'won';
       }
     }
-     */
+    return;
   }
 }
 
@@ -180,15 +157,15 @@ class LevelParser {
   obstacleFromSymbol(sym) {
     if(sym === 'x') {
       return 'wall';
-    } else if(sym === '!') {
+    } if(sym === '!') {
       return 'lava';
     }
   }
 
   createGrid(grid) {
-    let newGrid = [];
+    const newGrid = [];
     for(let i = 0; i < grid.length; i++) {
-      let newArray = [];
+      const newArray = [];
       for(let d = 0; d < grid[i].length; d++) {
         newArray.push(this.obstacleFromSymbol(grid[i].charAt(d)));
       }
@@ -198,12 +175,12 @@ class LevelParser {
   }
 
   createActors(actor) {
-    let newActor = [];
+    const newActor = [];
     for(let i = 0; i < actor.length; i++) {
       for(let d = 0; d < actor[i].length; d++) {
         let Act = this.activeActors[actor[i][d]];
         if(typeof(Act) === 'function') {
-          let option = new Act(new Vector(d, i));
+          const option = new Act(new Vector(d, i));
           if(option instanceof Actor) {
             newActor.push(option);
           }
@@ -239,7 +216,7 @@ class Fireball extends Actor {
   }
   
   act(time, level) {
-    let newPos = this.getNextPosition(time);
+    const newPos = this.getNextPosition(time);
     if (level.obstacleAt(newPos, this.size)) {
       this.handleObstacle();
       return;
